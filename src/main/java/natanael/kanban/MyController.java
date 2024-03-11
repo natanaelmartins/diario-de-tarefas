@@ -1,60 +1,94 @@
 package natanael.kanban;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import natanael.kanban.model.CadastroEntity;
+import natanael.kanban.model.UsuariosEntity;
 import natanael.kanban.model.TarefasEntity;
-import natanael.kanban.repositories.CadastroRepository;
+import natanael.kanban.repositories.UsuariosRepository;
 
 @Controller
 public class MyController {
     
     @Autowired
-    CadastroRepository cadastroRepository;
+    UsuariosRepository usuariosRepository;
 
-    CadastroEntity login = new CadastroEntity();
-
-    TarefasEntity tarefas = new TarefasEntity();
-
-    boolean telaCadastro = false;
-
-    @GetMapping("/")
-    public String login(ModelMap model) {
-
-        telaCadastro = false;
-
-        model.addAttribute("telaCadastro", false);
-
-        return "login";
+    UsuariosEntity usuarioLogado = new UsuariosEntity();
+    
+    BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
-    @PostMapping("/home")
-    public String home(ModelMap model, String email, String password, String cadastro) {
+    TarefasEntity tarefas = new TarefasEntity();
+    
+    @GetMapping("/login")
+	public String login() {
 
-        if ((!telaCadastro) && ("usuarioDesejaCadastro".equals(cadastro))) {
-            return "redirect:/cadastro";
-        }
+        return "login";
+	}
 
-        model.addAttribute("tarefa", tarefas);
+    @GetMapping("/home")
+    public String home() {
 
-        if ("admin@admin".equals(email)) {
-            return "home";
-        }
+        return "home";
+    }
 
-        return "redirect:/";
+    @GetMapping("/teste")
+    public String teste() {
+
+        return "teste";
     }
 
     @GetMapping("/cadastro")
-    public String cadastro(ModelMap model, String username, String password) {
+    public String cadastro() {
 
-        model.addAttribute("telaCadastro", true);
+        return "cadastro";
+    }
 
-        telaCadastro = true;
+    @GetMapping("/editarPerfil")
+    public String editarPerfil() {
 
-        return "login";
+        return "editarPerfil";
+    }
+    
+    @SuppressWarnings("null")
+    @PostMapping("/salvarCadastro")
+    public String salvarCadastro(String username, String email, String password) {
+
+        usuarioLogado.setUsername(username);
+        usuarioLogado.setEmail(email);
+        usuarioLogado.setPassword(passwordEncoder().encode(password));
+
+        try {
+            usuariosRepository.save(usuarioLogado);
+        } catch (Exception e) {
+            System.out.println("Usuário já cadastrado!");
+        }
+        
+        return "/login";
+    }
+
+    @SuppressWarnings("null")
+    @PostMapping("/editarCadastro")
+    public String editarCadastro(String username, String email, String password) {
+        
+        Optional<UsuariosEntity> usuarioAlterado = usuariosRepository.findByEmail(email);
+
+        usuarioAlterado.get().setUsername(username);
+        usuarioAlterado.get().setEmail(email);
+        usuarioAlterado.get().setPassword(passwordEncoder().encode(password));
+
+        try {
+            usuariosRepository.save(usuarioAlterado.get());
+        } catch (Exception e) {
+            System.out.println("Alteração de dados não pôde ser concluída!");
+        }
+        
+        return "redirect:/home";
     }
 }

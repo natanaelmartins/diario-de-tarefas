@@ -1,12 +1,178 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Exemplo Spring Boot com Thymeleaf</title>
+    <title>Game-themed Kanban Task Management</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- <link href='https://fonts.googleapis.com/css?family=Press Start 2P' rel='stylesheet'> -->
+    <style>
+      /* Custom styles for Kanban board */
+      body {
+        background-color: whitesmoke;
+        color: black;
+        font-family: "Press Start 2P", sans-serif;
+      }
+      .kanban-board {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+      }
+      .kanban-column {
+        flex: 1;
+        margin: 0 10px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: antiquewhite;
+      }
+      .kanban-column h2 {
+        text-align: center;
+      }
+      .kanban-task {
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid white;
+        border-radius: 5px;
+        background-color: beige;
+        cursor: move;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+      }
+      .kanban-task:hover {
+        background-color: white;
+      }
+
+      .add-task-form {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+      }
+
+      .add-task-form input[type="text"] {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+      }
+
+      .add-task-form button {
+        padding: 10px 20px;
+        border: none;
+        background-color: #4caf50;
+        color: #fff;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+
+      .add-task-form button:hover {
+        background-color: #45a049;
+      }
+    </style>
   </head>
-  <body> 
-    Hello World!
+  <body>
+    <div class="container">
+      <div class="d-flex justify-content-between mt-4 mb-4">
+        <h2>Gerenciador de tarefas</h2>
+        <div class="user-info">
+          <a href="/editarPerfil" class="btn btn-primary">Editar Perfil</a>
+        </div>
+      </div>
+
+      <div class="add-task-form">
+        <input type="text" id="taskInput" placeholder="Adicionar nova tarefa" />
+        <button onclick="addTask()">Adicionar</button>
+      </div>
+
+      <div class="kanban-board">
+        <div class="kanban-column">
+          <h5>lista de tarefas 💡</h5>
+          <div class="kanban-task" draggable="true">Task 1</div>
+          <div class="kanban-task" draggable="true">Task 2</div>
+        </div>
+        <div class="kanban-column">
+          <h5>em andamento 🕗</h5>
+          <div class="kanban-task" draggable="true">Task 3</div>
+        </div>
+        <div class="kanban-column">
+          <h5>concluídas 🎯</h5>
+          <div class="kanban-task" draggable="true">Task 4</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // JavaScript for drag-and-drop functionality
+      const tasks = document.querySelectorAll(".kanban-task");
+
+      tasks.forEach((task) => {
+        task.addEventListener("dragstart", () => {
+          task.classList.add("dragging");
+        });
+
+        task.addEventListener("dragend", () => {
+          task.classList.remove("dragging");
+        });
+      });
+
+      const columns = document.querySelectorAll(".kanban-column");
+
+      columns.forEach((column) => {
+        column.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          const afterElement = getDragAfterElement(column, e.clientY);
+          const draggingElement = document.querySelector(".dragging");
+          if (afterElement == null) {
+            column.appendChild(draggingElement);
+          } else {
+            column.insertBefore(draggingElement, afterElement);
+          }
+        });
+      });
+
+      function getDragAfterElement(column, y) {
+        const draggableElements = [
+          ...column.querySelectorAll(".kanban-task:not(.dragging)"),
+        ];
+
+        return draggableElements.reduce(
+          (closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) {
+              return { offset: offset, element: child };
+            } else {
+              return closest;
+            }
+          },
+          { offset: Number.NEGATIVE_INFINITY }
+        ).element;
+      }
+
+      function addTask() {
+        var taskInput = document.getElementById("taskInput");
+        var taskText = taskInput.value;
+        if (taskText.trim() === "") {
+          alert("Por favor, insira uma tarefa válida.");
+          return;
+        }
+        var taskList = document.querySelector(".kanban-column");
+        var taskItem = document.createElement("div");
+        taskItem.classList.add("kanban-task");
+        taskItem.draggable = true;
+        taskItem.innerHTML = `
+                <span>${taskText}</span>
+            `;
+        taskList.appendChild(taskItem);
+        taskInput.value = "";
+      }
+
+      function deleteTask(element) {
+        var taskItem = element.parentElement;
+        taskItem.remove();
+      }
+    </script>
   </body>
 </html>

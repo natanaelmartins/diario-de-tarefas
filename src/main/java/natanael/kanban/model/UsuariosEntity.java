@@ -14,15 +14,19 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "tabelaCadastro")
-public class CadastroEntity {
+@Entity(name = "Usuarios")
+public class UsuariosEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String username;
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
+    private String email;
+    @Column(nullable = false)
     private String password;
+    @Column
+    private String role; //Eg: ADMIN,USER
 }
