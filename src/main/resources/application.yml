@@ -1,7 +1,7 @@
 spring:
     ai:
       openai:
-        api-key: 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
+        api-key: openaikey
     datasource:
         url: jdbc:postgresql://localhost:5434/pg_nlw
         username: admin
