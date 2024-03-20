@@ -75,30 +75,38 @@
   <body>
     <div class="container">
       <div class="d-flex justify-content-between mt-4 mb-4">
-        <h2>Gerenciador de tarefas</h2>
+        <h2>Diário de tarefas</h2>
         <div class="user-info">
           <a href="/editarPerfil" class="btn btn-primary">Editar Perfil</a>
         </div>
       </div>
 
-      <div class="add-task-form">
-        <input type="text" id="taskInput" placeholder="Adicionar nova tarefa" />
-        <button onclick="addTask()">Adicionar</button>
-      </div>
+      <form th:action="@{/adicionarTarefa}" th:method="post">
+        <div class="add-task-form">
+          <input
+            type="text"
+            id="taskInput"
+            name="tarefa"
+            placeholder="Adicionar nova tarefa"
+          />
+          <button>Adicionar</button>
+        </div>
+      </form>
 
       <div class="kanban-board">
         <div class="kanban-column">
           <h5>lista de tarefas 💡</h5>
-          <div class="kanban-task" draggable="true">Task 1</div>
-          <div class="kanban-task" draggable="true">Task 2</div>
+
+          <tr th:each="tarefa: ${listaTarefas}">
+            <div class="kanban-task" draggable="true" th:text="${tarefa.taskText}" />
+          </tr>
+
         </div>
         <div class="kanban-column">
           <h5>em andamento 🕗</h5>
-          <div class="kanban-task" draggable="true">Task 3</div>
         </div>
         <div class="kanban-column">
           <h5>concluídas 🎯</h5>
-          <div class="kanban-task" draggable="true">Task 4</div>
         </div>
       </div>
     </div>
@@ -149,24 +157,6 @@
           },
           { offset: Number.NEGATIVE_INFINITY }
         ).element;
-      }
-
-      function addTask() {
-        var taskInput = document.getElementById("taskInput");
-        var taskText = taskInput.value;
-        if (taskText.trim() === "") {
-          alert("Por favor, insira uma tarefa válida.");
-          return;
-        }
-        var taskList = document.querySelector(".kanban-column");
-        var taskItem = document.createElement("div");
-        taskItem.classList.add("kanban-task");
-        taskItem.draggable = true;
-        taskItem.innerHTML = `
-                <span>${taskText}</span>
-            `;
-        taskList.appendChild(taskItem);
-        taskInput.value = "";
       }
 
       function deleteTask(element) {

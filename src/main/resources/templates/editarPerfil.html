@@ -13,7 +13,6 @@
     <title>Kanban diary</title>
   </head>
 
-
   <body style="background-color: #fdf0e0">
     <div class="d-flex justify-content-center">
       <a href="#">
@@ -29,19 +28,35 @@
       class="d-flex justify-content-center align-items-center"
       style="height: 50vh"
     >
-      <form th:action="@{/editarCadastro}" th:method="post" class="col-md-6 col-lg-4">
+      <form
+        th:action="@{/editarCadastro}"
+        th:method="post"
+        class="col-md-6 col-lg-4 d-flex flex-wrap justify-content-between"
+      >
         <div class="form-group">
-          <label for="exampleInputName1">Altere seu nome de usuário</label>
+          <label for="exampleInputName1">Editar nome completo</label>
           <input
             type="text"
             th:name="username"
             class="form-control"
             id="exampleInputName1"
-            placeholder="Nome"
+            placeholder="Nome completo"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="exampleInputUsername1">Editar nome de usuário</label>
+          <input
+            type="text"
+            th:name="username"
+            class="form-control"
+            id="exampleInputUsername1"
+            placeholder="Nome de usuário"
+            th:text="${usernameCadastrado}"
           />
         </div>
         <div class="form-group">
-          <label for="exampleInputEmail1">Altere seu email</label>
+          <label for="exampleInputEmail1">Editar email</label>
           <input
             type="email"
             th:name="email"
@@ -49,13 +64,34 @@
             id="exampleInputEmail1"
             aria-describedby="emailHelp"
             placeholder="Digite seu email"
+            th:text="${emailCadastrado}"
           />
           <small id="emailHelp" class="form-text text-muted"
             >Nunca compatilharemos seu email.</small
           >
         </div>
         <div class="form-group">
-          <label for="exampleInputPassword1">Altere sua senha</label>
+          <label for="exampleInputContact1">Editar telefone</label>
+          <input
+            type="tel"
+            th:name="contact"
+            class="form-control"
+            id="exampleInputContact1"
+            placeholder="Telefone"
+          />
+        </div>
+        <div class="form-group">
+          <label for="exampleInputBirthdate1">Editar data de nascimento</label>
+          <input
+            type="date"
+            th:name="birthdate"
+            class="form-control"
+            id="exampleInputBirthdate1"
+            placeholder="Data de nascimento"
+          />
+        </div>
+        <div class="form-group">
+          <label for="exampleInputPassword1">Editar senha</label>
           <input
             type="password"
             th:name="password"
@@ -70,7 +106,7 @@
           class="btn btn-primary"
           th:value="usuarioDesejaCadastro"
         >
-          Atualizar
+          Avançar
         </button>
       </form>
     </div>

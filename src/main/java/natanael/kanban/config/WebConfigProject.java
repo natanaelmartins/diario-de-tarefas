@@ -29,7 +29,7 @@ public class WebConfigProject {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers("/img/**", "/cadastro", "/salvarCadastro", "/ai").permitAll();
+                    registry.requestMatchers("/img/**", "/cadastro", "/salvarCadastro").permitAll();
                     registry.anyRequest().authenticated();
                 })
                 .formLogin(httpSecurityFormLoginConfigurer -> {

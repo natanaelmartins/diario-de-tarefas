@@ -1,23 +1,26 @@
 package natanael.kanban.model;
 
+import java.util.UUID;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity(name = "Tarefas")
 public class TarefasEntity {
-    
-    private String userInputOne;
-    private String userInputTwo;
 
-    public String getUserInputOne() {
-        return userInputOne;
-    }
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
-    public String getUserInputTwo() {
-        return userInputTwo;
-    }
-
-    public void setUserInputOne(String userInputOne) {
-        this.userInputOne = userInputOne;
-    }
-
-    public void setUserInputTwo(String userInputTwo) {
-        this.userInputTwo = userInputTwo;
-    }
+    @Column(nullable = false)
+    private String taskText;
 }
