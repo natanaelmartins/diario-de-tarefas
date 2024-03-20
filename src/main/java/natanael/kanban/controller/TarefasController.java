@@ -16,7 +16,7 @@ import natanael.kanban.repositories.TarefasRepository;
 import natanael.kanban.repositories.UsuariosRepository;
 
 @Controller
-public class MyController {
+public class TarefasController {
     
     @Autowired
     UsuariosRepository usuariosRepository;
