@@ -10,10 +10,9 @@
 version: '3.8'
 
 services:
-  postgres_nlw:
-    container_name: postgres_nlw
+  db:
+    container_name: db
     image: postgres
-    network_mode: bridge
     restart: always
     ports:
       - 5432:5432
@@ -28,12 +27,8 @@ services:
       context: .
     ports:
       - 8085:8085
-    network_mode: bridge
     depends_on:
-      - postgres_nlw
-    links:
-      - postgres_nlw
-
+      - db
 
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to
