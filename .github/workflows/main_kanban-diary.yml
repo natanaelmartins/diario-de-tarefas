@@ -1,3 +1,6 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
 name: Build and deploy JAR app to Azure Web App - kanban-diary
 
 on:
@@ -7,38 +10,39 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: windows-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - name: Install Docker
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker.io
+      - name: Set up Java version
+        uses: actions/setup-java@v1
+        with:
+          java-version: '17'
 
-      - name: Install Docker Compose
-        run: |
-          sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
-
-      - name: Start PostgreSQL container
-        run: docker-compose up -d db
-
-      - name: Wait for PostgreSQL to start
-        run: docker-compose exec -T db sh -c 'while ! pg_isready -U admin; do sleep 1; done;'
-
-      - name: Build JAR with Maven
+      - name: Build with Maven
         run: mvn clean install
 
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: java-app
           path: '${{ github.workspace }}/target/*.jar'
 
+  deploy:
+    runs-on: windows-latest
+    needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: java-app
+      
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
