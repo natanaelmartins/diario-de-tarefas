@@ -47,7 +47,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'kanban-diary'
+          app-name: 'diario-de-tarefas'
           slot-name: 'Production'
           package: '*.jar'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D6539E3B48E94800972D24AE7C043479 }}
