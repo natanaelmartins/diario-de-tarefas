@@ -1,5 +1,6 @@
 package natanael.kanban.repositories;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,4 +11,5 @@ import natanael.kanban.model.TarefasEntity;
 @Repository
 public interface TarefasRepository extends JpaRepository<TarefasEntity, UUID> {
     
+    List<TarefasEntity> findByMetaId(UUID metaId);
 }

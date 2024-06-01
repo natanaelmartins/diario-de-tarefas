@@ -18,9 +18,6 @@ public class UsuarioUserDetailsService implements UserDetailsService {
 	@Autowired
 	UsuariosRepository usuarioRepository;
 
-	// ele vai pedir pra imlementar o LoadUserByUsername (o nome do param pode ser email no seu caso)
-	// dentro do método LoadUserByUsername:
-
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<UsuariosEntity> usuario = usuarioRepository.findByEmail(email);
