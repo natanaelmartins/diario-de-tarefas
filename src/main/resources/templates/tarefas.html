@@ -8,7 +8,6 @@
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <!-- <link href='https://fonts.googleapis.com/css?family=Press Start 2P' rel='stylesheet'> -->
     <style>
       /* Custom styles for Kanban board */
       body {
@@ -105,6 +104,7 @@
 
       <form th:action="@{/adicionarTarefa}" th:method="post">
         <input type="hidden" name="metaId" th:value="${meta.id}" />
+        <input type="hidden" name="username" th:value="${username}" />
         <div class="add-task-form">
           <input
             type="text"
@@ -117,6 +117,7 @@
       </form>
 
       <div class="kanban-board">
+        <button class="btn btn-primary" onclick="returnToGoals()">⬅️</button>
         <div
           class="kanban-column"
           th:text="'Meta: ' + ${meta.tituloMeta}"
@@ -125,9 +126,9 @@
       <div class="kanban-board">
         <div class="kanban-column">
           <h5>lista de tarefas 💡</h5>
-
           <div
-            th:each="tarefa: ${listaTarefas}"
+            th:each="tarefa : ${listaTarefas}"
+            th:if="${tarefa.status == 'lista de tarefas '}"
             class="kanban-task"
             draggable="true"
           >
@@ -135,41 +136,189 @@
             <input type="hidden" name="id" th:value="${tarefa.id}" />
             <div class="task-title" th:text="${tarefa.taskText}"></div>
             <div class="actions">
-              <button class="edit" onclick="editTask(this)" data-bs-toggle="modal" data-bs-target="#editTaskModal">Editar</button>
-              <button class="delete" onclick="deleteTask(this)">Deletar</button>
+              <button
+                class="edit"
+                onclick="editTask(this)"
+                data-bs-toggle="modal"
+                data-bs-target="#editTaskModal"
+              >
+                ✏️
+              </button>
+              <button
+                class="delete"
+                onclick="deleteTask(this)"
+                data-bs-toggle="modal"
+                data-bs-target="#deleteTaskModal"
+              >
+                🗑️
+              </button>
             </div>
           </div>
         </div>
+
         <div class="kanban-column">
           <h5>em andamento 🕗</h5>
+          <div
+            th:each="tarefa : ${listaTarefas}"
+            th:if="${tarefa.status == 'em andamento '}"
+            class="kanban-task"
+            draggable="true"
+          >
+            <input type="hidden" name="txt" th:value="${tarefa.taskText}" />
+            <input type="hidden" name="id" th:value="${tarefa.id}" />
+            <div class="task-title" th:text="${tarefa.taskText}"></div>
+            <div class="actions">
+              <button
+                class="edit"
+                onclick="editTask(this)"
+                data-bs-toggle="modal"
+                data-bs-target="#editTaskModal"
+              >
+                ✏️
+              </button>
+              <button
+                class="delete"
+                onclick="deleteTask(this)"
+                data-bs-toggle="modal"
+                data-bs-target="#deleteTaskModal"
+              >
+                🗑️
+              </button>
+            </div>
+          </div>
         </div>
+
         <div class="kanban-column">
           <h5>concluídas 🎯</h5>
+          <div
+            th:each="tarefa : ${listaTarefas}"
+            th:if="${tarefa.status == 'concluídas '}"
+            class="kanban-task"
+            draggable="true"
+          >
+            <input type="hidden" name="txt" th:value="${tarefa.taskText}" />
+            <input type="hidden" name="id" th:value="${tarefa.id}" />
+            <div class="task-title" th:text="${tarefa.taskText}"></div>
+            <div class="actions">
+              <button
+                class="edit"
+                onclick="editTask(this)"
+                data-bs-toggle="modal"
+                data-bs-target="#editTaskModal"
+              >
+                ✏️
+              </button>
+              <button
+                class="edit"
+                onclick="deleteTask(this)"
+                data-bs-toggle="modal"
+                data-bs-target="#deleteTaskModal"
+              >
+                🗑️
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container mt-5">
+        <!-- Modal -->
+        <div
+          class="modal fade"
+          id="editTaskModal"
+          tabindex="-1"
+          aria-labelledby="editTaskModalLabel"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="editTaskModalLabel">
+                  Editar tarefa
+                </h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                  onclick="closeModal()"
+                ></button>
+              </div>
+              <div class="modal-body">
+                Digite um novo nome para a tarefa:
+                <input
+                  type="text"
+                  id="editTaskInput"
+                  class="form-control mt-2"
+                />
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                  onclick="closeModal()"
+                >
+                  Fechar
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  onclick="saveTaskChanges()"
+                >
+                  Salvar mudanças
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="container mt-5">
       <!-- Modal -->
-      <div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+      <div
+        class="modal fade"
+        id="deleteTaskModal"
+        tabindex="-1"
+        aria-labelledby="deleteTaskModalLabel"
+        aria-hidden="true"
+      >
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="editTaskModalLabel">Editar tarefa</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="closeModal()"></button>
+              <h5 class="modal-title" id="deleteTaskModalLabel">
+                Deletar tarefa
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                onclick="closeModal()"
+              ></button>
             </div>
             <div class="modal-body">
-              Digite um novo nome para a tarefa:
-              <input type="text" id="editTaskInput" class="form-control mt-2"/>
+              Tem certeza que deseja deletar essa tarefa?
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="closeModal()">Fechar</button>
-              <button type="button" class="btn btn-primary" onclick="saveTaskChanges()">Salvar mudanças</button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+                onclick="closeModal()"
+              >
+                Fechar
+              </button>
+              <button type="button" class="btn delete-button" onclick="deleteTaskModal()">
+                Deletar
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
     <script>
       // JavaScript for drag-and-drop functionality
@@ -198,6 +347,34 @@
             column.insertBefore(draggingElement, afterElement);
           }
         });
+
+        column.addEventListener("drop", async (e) => {
+          const columnName = column.querySelector("h5").innerText;
+          const taskElement = document.querySelector(".dragging");
+          const taskId = taskElement.querySelector("input[name='id']").value;
+          const metaId = document.querySelector("input[name='metaId']").value;
+
+          alert(metaId);
+
+          await fetch("/editarStatusTarefa", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({
+              id: taskId,
+              metaId: metaId,
+              status: columnName
+                .trimEnd()
+                .replace(
+                  /[\p{Emoji_Presentation}\p{Extended_Pictographic}]$/u,
+                  ""
+                ),
+            }),
+          });
+
+          location.reload();
+        });
       });
 
       function getDragAfterElement(column, y) {
@@ -220,7 +397,12 @@
       }
 
       var currentTaskItem = null;
-      var editTaskModal = new bootstrap.Modal(document.getElementById('editTaskModal'));
+
+      var deleteModal = new bootstrap.Modal(document.getElementById("deleteTaskModal"));
+
+      var editTaskModal = new bootstrap.Modal(
+        document.getElementById("editTaskModal")
+      );
 
       function editTask(element) {
         currentTaskItem = element.closest(".kanban-task");
@@ -251,10 +433,17 @@
         editTaskModal.hide();
       }
 
-      async function deleteTask(element) {
-        var taskItem = element.closest(".kanban-task");
+      var currentTaskItem = null;
 
+      function deleteTask(element) {
+        currentTaskItem = element.closest(".kanban-task");
+        deleteModal.show();
+      }
+
+      async function deleteTaskModal() {
+        var taskItem = currentTaskItem.closest(".kanban-task");
         var id = taskItem.querySelector("input[name='id']").value;
+        var metaId = document.querySelector("input[name='metaId']").value;
         var response = await fetch("/deletarTarefa", {
           method: "POST",
           headers: {
@@ -262,10 +451,22 @@
           },
           body: new URLSearchParams({
             id: id,
+            metaId: metaId
           }),
         });
 
         location.reload();
+      }
+
+      function returnToGoals() {
+        var usernameElement = document.querySelector('input[name="username"]');
+        var username = usernameElement ? usernameElement.value : null;
+
+        if (username) {
+          window.location.href = "/home/" + username;
+        } else {
+          alert("username not found");
+        }
       }
     </script>
 

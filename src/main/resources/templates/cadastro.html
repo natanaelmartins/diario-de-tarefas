@@ -13,7 +13,6 @@
     <title>Diário de tarefas</title>
   </head>
 
-
   <body style="background-color: #fdf0e0">
     <div class="d-flex justify-content-center">
       <a href="#">
@@ -31,14 +30,19 @@
     >
       <form th:action="@{/salvarCadastro}" th:method="post" class="col-md-6 col-lg-4">
         <div class="form-group">
-          <label for="exampleInputName1">Nome</label>
+          <label for="exampleInputName1">Username</label>
           <input
             type="text"
             th:name="username"
             class="form-control"
             id="exampleInputName1"
             placeholder="Nome"
+            required
+            pattern="[^ ]*"
           />
+          <small id="usernameHelp" class="form-text text-muted"
+            >Não deve possuir espaços.</small
+          >
         </div>
         <div class="form-group">
           <label for="exampleInputEmail1">Email</label>
@@ -49,6 +53,7 @@
             id="exampleInputEmail1"
             aria-describedby="emailHelp"
             placeholder="Digite seu email"
+            required
           />
           <small id="emailHelp" class="form-text text-muted"
             >Nunca compatilharemos seu email.</small
@@ -62,6 +67,7 @@
             class="form-control"
             id="exampleInputPassword1"
             placeholder="Senha"
+            required
           />
         </div>
         <button

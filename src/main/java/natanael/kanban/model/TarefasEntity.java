@@ -29,4 +29,7 @@ public class TarefasEntity {
     @ManyToOne
     @JoinColumn(name = "meta_id")
     private MetasEntity meta;
+
+    @Column
+    private String status;
 }

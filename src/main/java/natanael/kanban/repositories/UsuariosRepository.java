@@ -12,5 +12,7 @@ import natanael.kanban.model.UsuariosEntity;
 public interface UsuariosRepository extends JpaRepository<UsuariosEntity, UUID> {
 
     Optional<UsuariosEntity> findByEmail(String email);
+
+    Optional<UsuariosEntity> findByUsername(String username);
      
 } 

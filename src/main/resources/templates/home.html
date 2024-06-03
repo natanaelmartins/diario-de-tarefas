@@ -112,7 +112,9 @@
             id="metaInput"
             name="meta"
             placeholder="Adicionar nova meta"
+            required
           />
+          <input type="hidden" name="username" th:value="${username}" />
           <button>Adicionar</button>
         </div>
       </form>
@@ -126,6 +128,7 @@
             draggable="true"
           >
             <input type="hidden" name="id" th:value="${meta.id}" />
+            <input type="hidden" name="username" th:value="${username}" />
             <input
               type="hidden"
               name="tituloMeta"
@@ -135,7 +138,7 @@
             <div class="task-title" th:text="${meta.tituloMeta}"></div>
             <div class="task-actions">
               <button class="btn btn-success" onclick="openGoal(this)">
-                Visualizar
+                👁️
               </button>
               <button
                 type="button"
@@ -144,10 +147,10 @@
                 data-bs-toggle="modal"
                 data-bs-target="#exampleModal"
               >
-                Editar
+                ✏️
               </button>
-              <button class="delete-button" onclick="deleteGoal(this)">
-                Deletar
+              <button type="button" class="delete-button" id="delete-goal" onclick="deleteGoal(this)" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                🗑️
               </button>
             </div>
           </div>
@@ -199,14 +202,57 @@
       </div>
     </div>
 
+    <div class="container mt-5">
+      <div
+        class="modal fade"
+        id="deleteModal"
+        tabindex="-1"
+        aria-labelledby="deleteModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="deleteModalLabel">Deletar meta</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                onclick="closeModal()"
+              ></button>
+            </div>
+            <div class="modal-body">
+              Tem certeza que deseja deletar essa meta?
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+                onclick="closeModal()"
+              >
+                Fechar
+              </button>
+              <button type="button" class="btn delete-button" onclick="deleteGoalModal()">
+                Deletar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script>
       var currentTaskItem = null;
       var exampleModal = new bootstrap.Modal(document.getElementById('exampleModal'));
+      var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
 
       function openGoal(element) {
         var taskItem = element.closest(".kanban-task");
         var id = taskItem.querySelector("input[name='id']").value;
-        window.location.href = "/home/tarefas/" + id;
+        var username = taskItem.querySelector("input[name='username']").value;
+        window.location.href = "/home/tarefas/" + username + "/" + id;
       }
 
       function editGoal(element) {
@@ -238,9 +284,13 @@
         exampleModal.hide();
       }
 
-      async function deleteGoal(element) {
-        var taskItem = element.closest(".kanban-task");
-        var id = taskItem.querySelector("input[name='id']").value;
+      function deleteGoal(element) {
+        currentTaskItem = element.closest(".kanban-task");
+        deleteModal.show();
+      }
+
+      async function deleteGoalModal() {
+        var id = currentTaskItem.querySelector("input[name='id']").value;
         var response = await fetch("/deletarMeta", {
           method: "POST",
           headers: {

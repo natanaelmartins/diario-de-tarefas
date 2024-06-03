@@ -34,28 +34,6 @@
         class="col-md-6 col-lg-4 d-flex flex-wrap justify-content-between"
       >
         <div class="form-group">
-          <label for="exampleInputName1">Editar nome completo</label>
-          <input
-            type="text"
-            th:name="username"
-            class="form-control"
-            id="exampleInputName1"
-            placeholder="Nome completo"
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="exampleInputUsername1">Editar nome de usuário</label>
-          <input
-            type="text"
-            th:name="username"
-            class="form-control"
-            id="exampleInputUsername1"
-            placeholder="Nome de usuário"
-            th:text="${usernameCadastrado}"
-          />
-        </div>
-        <div class="form-group">
           <label for="exampleInputEmail1">Editar email</label>
           <input
             type="email"
@@ -71,13 +49,15 @@
           >
         </div>
         <div class="form-group">
-          <label for="exampleInputContact1">Editar telefone</label>
+          <label for="exampleInputUsername1">Editar nome de usuário</label>
           <input
-            type="tel"
-            th:name="contact"
+            type="text"
+            th:name="username"
             class="form-control"
-            id="exampleInputContact1"
-            placeholder="Telefone"
+            id="exampleInputUsername1"
+            placeholder="Nome de usuário"
+            th:value="${username}"
+            pattern="[^ ]*"
           />
         </div>
         <div class="form-group">
@@ -98,6 +78,7 @@
             class="form-control"
             id="exampleInputPassword1"
             placeholder="Senha"
+            required
           />
         </div>
         <button
