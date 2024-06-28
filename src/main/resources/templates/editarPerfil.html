@@ -17,7 +17,7 @@
     <div class="d-flex justify-content-center">
       <a href="#">
         <img
-          th:src="@{img/kanban-app-logo.png}"
+          src="img/kanban-app-logo.png"
           alt="Kanba app logo"
           style="height: 250px; width: 250px"
         />
@@ -29,20 +29,22 @@
       style="height: 50vh"
     >
       <form
-        th:action="@{/editarCadastro}"
-        th:method="post"
+        action="/editarCadastro"
+        method="post"
         class="col-md-6 col-lg-4 d-flex flex-wrap justify-content-between"
+        onsubmit="return validatePasswords()"
       >
+        <div id="error-message" class="alert alert-danger" style="display: none; width: 100%;">As senhas não coincidem. Por favor, tente novamente.</div>
         <div class="form-group">
           <label for="exampleInputEmail1">Editar email</label>
           <input
             type="email"
-            th:name="email"
+            name="email"
             class="form-control"
             id="exampleInputEmail1"
             aria-describedby="emailHelp"
             placeholder="Digite seu email"
-            th:text="${emailCadastrado}"
+            th:value="${emailCadastrado}"
           />
           <small id="emailHelp" class="form-text text-muted"
             >Nunca compatilharemos seu email.</small
@@ -52,7 +54,7 @@
           <label for="exampleInputUsername1">Editar nome de usuário</label>
           <input
             type="text"
-            th:name="username"
+            name="username"
             class="form-control"
             id="exampleInputUsername1"
             placeholder="Nome de usuário"
@@ -64,7 +66,7 @@
           <label for="exampleInputBirthdate1">Editar data de nascimento</label>
           <input
             type="date"
-            th:name="birthdate"
+            name="birthdate"
             class="form-control"
             id="exampleInputBirthdate1"
             placeholder="Data de nascimento"
@@ -74,22 +76,57 @@
           <label for="exampleInputPassword1">Editar senha</label>
           <input
             type="password"
-            th:name="password"
+            name="password"
             class="form-control"
             id="exampleInputPassword1"
             placeholder="Senha"
             required
           />
         </div>
+        <div class="form-group">
+          <label for="exampleInputPassword2">Confirme sua nova senha</label>
+          <input
+            type="password"
+            name="confirm_password"
+            class="form-control"
+            id="exampleInputPassword2"
+            placeholder="Senha"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="exampleInputPhone">Editar telefone</label>
+          <input
+            type="tel"
+            name="phone"
+            class="form-control"
+            id="exampleInputPhone"
+            placeholder="Telefone"
+          />
+        </div>
         <button
-          th:name="cadastro"
+          name="cadastro"
           type="submit"
           class="btn btn-primary"
-          th:value="usuarioDesejaCadastro"
+          value="usuarioDesejaCadastro"
         >
           Avançar
         </button>
       </form>
     </div>
+
+    <script>
+      function validatePasswords() {
+        var password = document.getElementById("exampleInputPassword1").value;
+        var confirmPassword = document.getElementById("exampleInputPassword2").value;
+        var errorMessage = document.getElementById("error-message");
+        if (password !== confirmPassword) {
+          errorMessage.style.display = "block";
+          return false;
+        }
+        errorMessage.style.display = "none";
+        return true;
+      }
+    </script>
   </body>
 </html>

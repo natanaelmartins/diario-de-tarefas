@@ -159,7 +159,7 @@ public class TarefasController {
     }
 
     @PostMapping("/editarMeta")
-    public String editarMeta(String id, String tituloMeta) {
+    public String editarMeta(String id, String tituloMeta, Principal principal) {
 
         MetasEntity metaEditada = metasRepository.findById(UUID.fromString(id)).get();
 
@@ -167,7 +167,7 @@ public class TarefasController {
 
         metasRepository.save(metaEditada);
 
-        return "redirect:/home/tarefas";
+        return "redirect:/home/" + principal.getName();
     }
 
     @PostMapping("/deletarMeta")
@@ -188,7 +188,7 @@ public class TarefasController {
     }
 
     @PostMapping("/editarTarefa")
-    public String editarTarefa(String id, String txt) {
+    public String editarTarefa(String id, String txt, Principal principal, String metaId) {
 
         TarefasEntity tarefaEditada = tarefasRepository.findById(UUID.fromString(id)).get();
 
@@ -196,7 +196,7 @@ public class TarefasController {
 
         tarefasRepository.save(tarefaEditada);
 
-        return "redirect:/home/tarefas";
+        return "redirect:/home/tarefas/" + principal.getName() + "/" + metaId;
     }
 
     @PostMapping("/editarStatusTarefa")

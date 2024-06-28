@@ -17,7 +17,7 @@
     <div class="d-flex justify-content-center">
       <a href="#">
         <img
-          th:src="@{img/kanban-app-logo.png}"
+          src="img/kanban-app-logo.png"
           alt="Kanba app logo"
           style="height: 250px; width: 250px"
         />
@@ -28,12 +28,13 @@
       class="d-flex justify-content-center align-items-center"
       style="height: 50vh"
     >
-      <form th:action="@{/salvarCadastro}" th:method="post" class="col-md-6 col-lg-4">
+      <form action="/salvarCadastro" method="post" class="col-md-6 col-lg-4" onsubmit="return validatePasswords()">
+        <div id="error-message" class="alert alert-danger" style="display: none;">As senhas não coincidem. Por favor, tente novamente.</div>
         <div class="form-group">
           <label for="exampleInputName1">Username</label>
           <input
             type="text"
-            th:name="username"
+            name="username"
             class="form-control"
             id="exampleInputName1"
             placeholder="Nome"
@@ -48,7 +49,7 @@
           <label for="exampleInputEmail1">Email</label>
           <input
             type="email"
-            th:name="email"
+            name="email"
             class="form-control"
             id="exampleInputEmail1"
             aria-describedby="emailHelp"
@@ -56,29 +57,57 @@
             required
           />
           <small id="emailHelp" class="form-text text-muted"
-            >Nunca compatilharemos seu email.</small
+            >Nunca compartilharemos seu email.</small
           >
         </div>
         <div class="form-group">
           <label for="exampleInputPassword1">Senha</label>
           <input
             type="password"
-            th:name="password"
+            name="password"
             class="form-control"
             id="exampleInputPassword1"
             placeholder="Senha"
             required
           />
         </div>
+        <div class="form-group">
+          <label for="exampleInputPassword2">Confirmar sua senha</label>
+          <input
+            type="password"
+            name="confirm_password"
+            class="form-control"
+            id="exampleInputPassword2"
+            placeholder="Senha"
+            required
+          />
+        </div>
         <button
-          th:name="cadastro"
+          name="cadastro"
           type="submit"
           class="btn btn-primary"
-          th:value="usuarioDesejaCadastro"
+          value="usuarioDesejaCadastro"
         >
           Cadastrar
         </button>
       </form>
     </div>
+
+    <script>
+      function validatePasswords() {
+        var password = document.getElementById("exampleInputPassword1").value;
+        var confirmPassword = document.getElementById("exampleInputPassword2").value;
+        if (password !== confirmPassword) {
+          var errorMessage = document.getElementById("error-message");
+          errorMessage.style.display = "block";
+          return false;
+        }
+        return true;
+      }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBkW2SOeb1z9Zl+9781mBiFeWpgwJaxM/tTwp1iZ" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+d0+O3sMDZ+1sQp3b1V1gtjviTmMiqXKFi3G05fJ0RS5FUz0g" crossorigin="anonymous"></script>
   </body>
 </html>

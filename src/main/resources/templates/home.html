@@ -94,14 +94,28 @@
       .add-task-form button:hover {
         background-color: #45a049;
       }
+      .spinner-border {
+        width: 3rem;
+        height: 3rem;
+        border-width: 0.3rem;
+      }
+      .spinner-div {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+      }
     </style>
   </head>
   <body>
     <div class="container">
       <div class="d-flex justify-content-between mt-4 mb-4">
         <h2>Diário de tarefas</h2>
-        <div class="user-info">
+        <div class="user-actions">
           <a href="/editarPerfil" class="btn btn-primary">Editar Perfil</a>
+          <a href="/logout" class="btn btn-danger">Logout</a>
         </div>
       </div>
 
@@ -149,12 +163,25 @@
               >
                 ✏️
               </button>
-              <button type="button" class="delete-button" id="delete-goal" onclick="deleteGoal(this)" data-bs-toggle="modal" data-bs-target="#deleteModal">
+              <button
+                type="button"
+                class="delete-button"
+                id="delete-goal"
+                onclick="deleteGoal(this)"
+                data-bs-toggle="modal"
+                data-bs-target="#deleteModal"
+              >
                 🗑️
               </button>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div id="loadingSpinner" class="spinner-div">
+      <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
       </div>
     </div>
 
@@ -178,9 +205,7 @@
                 onclick="closeModal()"
               ></button>
             </div>
-            <div class="modal-body">
-              Digite um novo nome para a meta:
-            </div>
+            <div class="modal-body">Digite um novo nome para a meta:</div>
             <div class="add-task-form">
               <input type="text" id="editGoalInput" />
             </div>
@@ -193,7 +218,11 @@
               >
                 Fechar
               </button>
-              <button type="button" class="btn btn-primary" onclick="saveGoalChanges()">
+              <button
+                type="button"
+                class="btn btn-primary"
+                onclick="saveGoalChanges()"
+              >
                 Salvar mudanças
               </button>
             </div>
@@ -234,7 +263,11 @@
               >
                 Fechar
               </button>
-              <button type="button" class="btn delete-button" onclick="deleteGoalModal()">
+              <button
+                type="button"
+                class="btn delete-button"
+                onclick="deleteGoalModal()"
+              >
                 Deletar
               </button>
             </div>
@@ -245,8 +278,22 @@
 
     <script>
       var currentTaskItem = null;
-      var exampleModal = new bootstrap.Modal(document.getElementById('exampleModal'));
-      var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+      var exampleModal = new bootstrap.Modal(
+        document.getElementById("exampleModal")
+      );
+      var deleteModal = new bootstrap.Modal(
+        document.getElementById("deleteModal")
+      );
+
+      function showLoading() {
+        var loadingSpinner = document.getElementById("loadingSpinner");
+        loadingSpinner.style.display = "block";
+      }
+
+      function hideLoading() {
+        var loadingSpinner = document.getElementById("loadingSpinner");
+        loadingSpinner.style.display = "none";
+      }
 
       function openGoal(element) {
         var taskItem = element.closest(".kanban-task");
@@ -266,6 +313,7 @@
         var newTitle = document.getElementById("editGoalInput").value;
         if (newTitle && currentTaskItem) {
           var id = currentTaskItem.querySelector("input[name='id']").value;
+          showLoading();
           var response = await fetch("/editarMeta", {
             method: "POST",
             headers: {
@@ -276,6 +324,7 @@
               tituloMeta: newTitle,
             }),
           });
+          hideLoading();
           location.reload();
         }
       }
@@ -291,6 +340,7 @@
 
       async function deleteGoalModal() {
         var id = currentTaskItem.querySelector("input[name='id']").value;
+        showLoading();
         var response = await fetch("/deletarMeta", {
           method: "POST",
           headers: {
@@ -300,6 +350,7 @@
             id: id,
           }),
         });
+        hideLoading();
         location.reload();
       }
     </script>
