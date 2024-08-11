@@ -1,10 +1,15 @@
 package natanael.kanban.controller;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -14,15 +19,24 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import natanael.kanban.model.UsuariosEntity;
-import natanael.kanban.enums.statusTarefa;
+import natanael.kanban.enums.ConstantesIA;
+import natanael.kanban.enums.StatusTarefa;
 import natanael.kanban.model.MetasEntity;
 import natanael.kanban.model.TarefasEntity;
 import natanael.kanban.repositories.MetasRepository;
 import natanael.kanban.repositories.TarefasRepository;
 import natanael.kanban.repositories.UsuariosRepository;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class TarefasController {
+
+    private ChatClient chatClient;
+
+    @Autowired
+    public void ChatController(ChatClient.Builder builder) {
+        this.chatClient = builder.build();
+    }
 
     @Autowired
     UsuariosRepository usuariosRepository;
@@ -173,6 +187,10 @@ public class TarefasController {
     @PostMapping("/deletarMeta")
     public String deletarMeta(String id) {
 
+        List<TarefasEntity> listaTarefas = tarefasRepository.findByMetaId(UUID.fromString(id));
+        
+        tarefasRepository.deleteAll(listaTarefas);
+
         metasRepository.delete(metasRepository.findById(UUID.fromString(id)).get());
 
         return "redirect:/home";
@@ -181,8 +199,8 @@ public class TarefasController {
     @PostMapping("/adicionarTarefa")
     public String adicionarTarefa(String tarefa, String metaId, Principal principal) {
 
-        tarefasRepository.save(new TarefasEntity(UUID.randomUUID(), tarefa,
-                metasRepository.findById(UUID.fromString(metaId)).get(), statusTarefa.LISTA_TAREFAS.getDescricao()));
+        tarefasRepository.save(new TarefasEntity(UUID.randomUUID(), tarefa, null,
+                metasRepository.findById(UUID.fromString(metaId)).get(), StatusTarefa.LISTA_TAREFAS.getDescricao()));
 
         return "redirect:/home/tarefas/" + principal.getName() + "/" + metaId;
     }
@@ -215,6 +233,40 @@ public class TarefasController {
     public String deletarTarefa(String id, String metaId, Principal principal) {
 
         tarefasRepository.delete(tarefasRepository.findById(UUID.fromString(id)).get());
+
+        return "redirect:/home/tarefas/" + principal.getName() + "/" + metaId;
+    }
+
+    @PostMapping("/gerarTarefa")
+    public String gerarTarefas(String objetivo, String metaId, Principal principal) {
+
+        String resposta = chatClient.prompt().user(ConstantesIA.PROMPT.promptFormatado(objetivo)).call().content();
+
+        Map<String, String> respostaMapeada = Map.of(ConstantesIA.GENERATION.getDescricao(), resposta);
+
+        String respostaJson = respostaMapeada.get(ConstantesIA.GENERATION.getDescricao());
+
+        JSONObject objetoJson = new JSONObject(respostaJson);
+
+        JSONArray listaTarefas = objetoJson.getJSONArray(ConstantesIA.STEPS.getDescricao());
+
+        List<String[]> listaTarefasFormatada = new ArrayList<>();
+
+        for (int i = 0; i < listaTarefas.length(); i++) {
+            JSONObject elemento = listaTarefas.getJSONObject(i);
+            String titulo = elemento.getString("title");
+            String descricao = elemento.getString("description");
+
+            String[] tarefaFormatada = new String[] { titulo, descricao };
+
+            listaTarefasFormatada.add(tarefaFormatada);
+        }
+
+        for (String[] tarefa : listaTarefasFormatada) {
+
+            tarefasRepository.save(new TarefasEntity(UUID.randomUUID(), tarefa[0], tarefa[1],
+                metasRepository.findById(UUID.fromString(metaId)).get(), StatusTarefa.LISTA_TAREFAS.getDescricao()));
+        }
 
         return "redirect:/home/tarefas/" + principal.getName() + "/" + metaId;
     }

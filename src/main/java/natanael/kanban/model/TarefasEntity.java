@@ -26,6 +26,9 @@ public class TarefasEntity {
     @Column(nullable = false)
     private String taskText;
 
+    @Column
+    private String descricao;
+
     @ManyToOne
     @JoinColumn(name = "meta_id")
     private MetasEntity meta;

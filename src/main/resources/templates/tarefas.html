@@ -79,6 +79,15 @@
         border-radius: 3px;
       }
 
+      .button-generate-task {
+        padding: 10px 20px;
+        border: none;
+        background-color: #4caf50;
+        color: #fff;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+
       .add-task-form button {
         padding: 10px 20px;
         border: none;
@@ -135,8 +144,18 @@
         <button class="btn btn-primary" onclick="returnToGoals()">⬅️</button>
         <div
           class="kanban-column"
+          name="objetivo"
           th:text="'Meta: ' + ${meta.tituloMeta}"
-        ></div>
+        >
+      </div>
+
+      <form th:action="@{/gerarTarefa}" th:method="post">
+        <input type="hidden" name="objetivo" th:value="${meta.tituloMeta}" />
+        <input type="hidden" name="metaId" th:value="${meta.id}" />
+        <input type="hidden" name="username" th:value="${username}" />
+        <button class="button-generate-task">Gerar tarefas</button>
+      </form>
+
       </div>
       <div class="kanban-board">
         <div class="kanban-column">
@@ -150,6 +169,9 @@
             <input type="hidden" name="txt" th:value="${tarefa.taskText}" />
             <input type="hidden" name="id" th:value="${tarefa.id}" />
             <div class="task-title" th:text="${tarefa.taskText}"></div>
+
+            <div class="task-description" th:if="${tarefa.descricao}" style="border: 1px solid black; padding: 10px; margin-top: 5px;" th:text="${tarefa.descricao}"></div>
+            
             <div class="actions">
               <button
                 class="edit"

@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum statusTarefa {
+public enum StatusTarefa {
     LISTA_TAREFAS("lista de tarefas "), 
     EM_ANDAMENTO("em andamento "),
     CONCLUIDAS("concluidas ");
