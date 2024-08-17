@@ -1,5 +1,6 @@
 package natanael.kanban.model;
 
+import java.util.Date;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -28,6 +29,9 @@ public class TarefasEntity {
 
     @Column
     private String descricao;
+
+    @Column
+    private Date prazo;
 
     @ManyToOne
     @JoinColumn(name = "meta_id")

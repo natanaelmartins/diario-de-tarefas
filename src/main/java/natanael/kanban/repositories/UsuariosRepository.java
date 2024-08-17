@@ -15,4 +15,4 @@ public interface UsuariosRepository extends JpaRepository<UsuariosEntity, UUID> 
 
     Optional<UsuariosEntity> findByUsername(String username);
      
-} 
+}

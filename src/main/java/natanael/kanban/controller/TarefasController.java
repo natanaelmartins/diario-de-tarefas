@@ -20,13 +20,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import natanael.kanban.model.UsuariosEntity;
 import natanael.kanban.enums.ConstantesIA;
-import natanael.kanban.enums.StatusTarefa;
+import natanael.kanban.enums.StatusTarefaEnum;
 import natanael.kanban.model.MetasEntity;
 import natanael.kanban.model.TarefasEntity;
 import natanael.kanban.repositories.MetasRepository;
 import natanael.kanban.repositories.TarefasRepository;
 import natanael.kanban.repositories.UsuariosRepository;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class TarefasController {
@@ -199,8 +198,8 @@ public class TarefasController {
     @PostMapping("/adicionarTarefa")
     public String adicionarTarefa(String tarefa, String metaId, Principal principal) {
 
-        tarefasRepository.save(new TarefasEntity(UUID.randomUUID(), tarefa, null,
-                metasRepository.findById(UUID.fromString(metaId)).get(), StatusTarefa.LISTA_TAREFAS.getDescricao()));
+        tarefasRepository.save(new TarefasEntity(UUID.randomUUID(), tarefa, null, null,
+                metasRepository.findById(UUID.fromString(metaId)).get(), StatusTarefaEnum.LISTA_TAREFAS.getDescricao()));
 
         return "redirect:/home/tarefas/" + principal.getName() + "/" + metaId;
     }
@@ -264,8 +263,8 @@ public class TarefasController {
 
         for (String[] tarefa : listaTarefasFormatada) {
 
-            tarefasRepository.save(new TarefasEntity(UUID.randomUUID(), tarefa[0], tarefa[1],
-                metasRepository.findById(UUID.fromString(metaId)).get(), StatusTarefa.LISTA_TAREFAS.getDescricao()));
+            tarefasRepository.save(new TarefasEntity(UUID.randomUUID(), tarefa[0], tarefa[1], null,
+                metasRepository.findById(UUID.fromString(metaId)).get(), StatusTarefaEnum.LISTA_TAREFAS.getDescricao()));
         }
 
         return "redirect:/home/tarefas/" + principal.getName() + "/" + metaId;
